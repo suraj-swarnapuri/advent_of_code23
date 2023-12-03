@@ -89,59 +89,36 @@ func findCalibrationValue(input string)int {
 }
 
 func findCalibrationValueDayTwo(input string) int{
-	numList := []string{
-		"1",
-		"2",
-		"3",
-		"4",
-		"5",
-		"6",
-		"7",
-		"8",
-		"9",
-		"one",
-		"two",
-		"three",
-		"four",
-		"five",
-		"six",
-		"seven",
-		"eight",
-		"nine",
-	}
-	
-	wordMap := make(map[string]int,0)
-
-	for _,number := range(numList){
-		index := strings.Index(input, number)
-		if index != -1{
-			wordMap[number] = index
-		}
-	}
-
-	min,max := findMinMax(wordMap)
-
-
-	return min*10+max
+	arg := extractDigitsAndSpeltStrings(input)
+	return arg[0]*10+arg[len(arg)-1]
 }
 
-func findMinMax(m map[string]int) (int,int) {
-	// Initialize min and max with the first element's value
-	firstValue,lastValue := "",""
-	min,max := 1000000,-1
+func extractDigitsAndSpeltStrings(str string) []int {
+	spellingMap := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+		"four":  4,
+		"five":  5,
+		"six":   6,
+		"seven": 7,
+		"eight": 8,
+		"nine":  9,
+	}
 
-
-	// Iterate over the map to find min and max
-	for i, v := range m {
-		if v < min {
-			min = v
-			firstValue = i
-		}
-		if v > max {
-			max = v
-			lastValue = i
+	digits := []int{}
+	for i, char := range str {
+		if digit, err := strconv.Atoi(string(char)); err == nil {
+			digits = append(digits, digit)
+		} else {
+			for spelling, number := range spellingMap {
+				if strings.HasPrefix(str[i:], spelling) {
+					digits = append(digits, number)
+					break
+				}
+			}
 		}
 	}
 
-	return numMap[firstValue], numMap[lastValue]
+	return digits
 }
